@@ -17,8 +17,8 @@ def handle_client(conn):
         return False
     print(f"Received data: {data}")
 
-    #message_size = struct.unpack(">i", data[0:4])[0]
-    message_size = 6
+    message_size = struct.unpack(">i", data[0:4])[0]
+   
     request_api_key = struct.unpack(">h", data[4:6])[0]
     request_api_version = struct.unpack(">h", data[6:8])[0]
     correlation_id = struct.unpack(">i", data[8:12])[0]
@@ -33,7 +33,7 @@ def handle_client(conn):
 
 
     # kafka response
-    response = struct.pack(">i", message_size) + struct.pack(">i", correlation_id) + struct.pack(">h", 0)
+    response = struct.pack(">i", message_size) + struct.pack(">i", correlation_id) + struct.pack(">h", error_code)
 
     conn.sendall(response)
 
