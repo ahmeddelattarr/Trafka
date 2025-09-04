@@ -14,7 +14,7 @@ def main():
     print(f"Client connected from {addr}")
 
     # kafka respone
-    response = struct.pack(">i", 4, 7)
+    response = struct.pack(">ii", 4, 7)
 
     conn.sendall(response)
 
