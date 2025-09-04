@@ -12,11 +12,13 @@ def main():
     while True :
         server = socket.create_server(("localhost", 9092), reuse_port=True)
         conn,addr =server.accept() # wait for client
+        data=conn.recv(1024)
 
         print(f"Client connected from {addr}")
 
-        message=0
-        correlation_id =7
+        message=4
+
+        correlation_id = struct.unpack(">i", data[4:8])[0] # extract correlation id from request
 
     # kafka response
         response = struct.pack(">i", message) + struct.pack(">i", correlation_id)
@@ -25,7 +27,7 @@ def main():
 
         #conn.close()
 
-        print("Response sent and connection closed.")
+        print("Response sent.")
 
 if __name__ == "__main__":
     main()
