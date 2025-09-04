@@ -6,6 +6,7 @@ BUFFER_SIZE = 1024
 
 def setup_server():
     server = socket.create_server((HOST, PORT), reuse_port=True)
+    return server
 
 def handle_client(conn):
     data = conn.recv(BUFFER_SIZE)
@@ -31,7 +32,7 @@ def main():
     # they'll be visible when running tests.
     print("Logs from your program will appear here!")
 
-    # Uncomment this to pass the first stage
+
     server = setup_server()
 
     while True:
