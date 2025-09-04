@@ -23,7 +23,7 @@ def main():
 
         conn.sendall(response)
 
-        conn.close()
+        #conn.close()
 
         print("Response sent and connection closed.")
 
