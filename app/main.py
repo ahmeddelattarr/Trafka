@@ -22,6 +22,8 @@ def handle_client(conn):
     request_api_version = struct.unpack(">h", data[6:8])[0]
     correlation_id = struct.unpack(">i", data[8:12])[0]
 
+    print(f"Received request: api_key={request_api_key}, version={request_api_version}, correlation_id={correlation_id}")
+
     if request_api_version not in SUPPORTED_API_VERSIONS:
         error_code = UNSUPPORTED_VERSION_ERROR
     else:
