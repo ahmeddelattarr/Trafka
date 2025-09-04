@@ -4,6 +4,9 @@ HOST = "localhost"
 PORT = 9092
 BUFFER_SIZE = 1024
 
+SUPPORTED_API_VERSIONS = range(0, 5)  # supports 0–4
+UNSUPPORTED_VERSION_ERROR = 35
+
 def setup_server():
     server = socket.create_server((HOST, PORT), reuse_port=True)
     return server
@@ -14,12 +17,18 @@ def handle_client(conn):
         return False
     print(f"Received data: {data}")
 
-    message = 4
+    message_size = struct.unpack(">i", data[0:4])[0]
+    request_api_key = struct.unpack(">h", data[4:6])[0]
+    request_api_version = struct.unpack(">h", data[6:8])[0]
+    correlation_id = struct.unpack(">i", data[8:12])[0]
 
-    correlation_id = struct.unpack(">i", data[8:12])[0]  # extract correlation id from request
+    if request_api_version not in SUPPORTED_API_VERSIONS:
+        error_code = UNSUPPORTED_VERSION_ERROR
+    else:
+        error_code = 0
 
     # kafka response
-    response = struct.pack(">i", message) + struct.pack(">i", correlation_id)
+    response = struct.pack(">i", message_size) + struct.pack(">i", correlation_id) + struct.pack(">h", 0)
 
     conn.sendall(response)
 
