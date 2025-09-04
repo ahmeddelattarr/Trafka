@@ -18,7 +18,7 @@ def main():
 
         message=4
 
-        correlation_id = struct.unpack(">i", data[4:7])[0] # extract correlation id from request
+        correlation_id = struct.unpack(">i", data[8:12])[0] # extract correlation id from request
 
     # kafka response
         response = struct.pack(">i", message) + struct.pack(">i", correlation_id)
