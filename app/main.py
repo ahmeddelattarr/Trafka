@@ -26,8 +26,7 @@ def handle_client(conn):
 
     if request_api_version not in SUPPORTED_API_VERSIONS:
         error_code = UNSUPPORTED_VERSION_ERROR
-    else:
-        error_code = 0
+
 
     # kafka response
     response = struct.pack(">i", message_size) + struct.pack(">i", correlation_id) + struct.pack(">h", 0)
