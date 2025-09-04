@@ -1,6 +1,7 @@
 import socket , struct   # noqa: F401
 
 
+
 def main():
     # You can use print statements as follows for debugging,
     # they'll be visible when running tests.
@@ -8,19 +9,23 @@ def main():
 
     # Uncomment this to pass the first stage
     #
-    server = socket.create_server(("localhost", 9092), reuse_port=True)
-    conn,addr =server.accept() # wait for client
+    while True :
+        server = socket.create_server(("localhost", 9092), reuse_port=True)
+        conn,addr =server.accept() # wait for client
 
-    print(f"Client connected from {addr}")
+        print(f"Client connected from {addr}")
 
-    # kafka respone
-    response = struct.pack(">ii", 4, 7)
+        message=0
+        correlation_id =7
 
-    conn.sendall(response)
+    # kafka response
+        response = struct.pack(">i", message) + struct.pack(">i", correlation_id)
 
-    conn.close()
+        conn.sendall(response)
 
-    print("Response sent and connection closed.")
+        conn.close()
+
+        print("Response sent and connection closed.")
 
 if __name__ == "__main__":
     main()
