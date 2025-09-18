@@ -25,7 +25,7 @@ def build_api_versions_response(correlation_id, error_code=0):
     body += struct.pack(">h", response_dict["error_code"])
     body += struct.pack(">i", len(response_dict["apis"]))  # num_api_keys
     body += struct.pack(">i", response_dict["throttle_time_ms"])
-    body += b"\x00"  # tagged_fields_count = 0
+    #body += b"\x00"  # tagged_fields_count = 0
 
     message_size = len(body)
     return struct.pack(">i", message_size) + body, response_dict
