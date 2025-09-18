@@ -6,6 +6,7 @@ BUFFER_SIZE = 1024
 
 SUPPORTED_API_VERSIONS = range(0, 5)  # supports 0–4
 UNSUPPORTED_VERSION_ERROR = 35
+throttle_time_ms = 0
 
 def setup_server():
     server = socket.create_server((HOST, PORT), reuse_port=True)
@@ -17,11 +18,15 @@ def handle_client(conn):
         return False
     print(f"Received data: {data}")
 
-    message_size = struct.unpack(">i", data[0:4])[0]
+
+
+    #message_size = struct.unpack(">i", data[0:4])[0]
    
     request_api_key = struct.unpack(">h", data[4:6])[0]
     request_api_version = struct.unpack(">h", data[6:8])[0]
     correlation_id = struct.unpack(">i", data[8:12])[0]
+
+
 
     print(f"Received request: api_key={request_api_key}, version={request_api_version}, correlation_id={correlation_id}")
 
@@ -30,10 +35,19 @@ def handle_client(conn):
     else:
         error_code = 0
 
+    body = (
+            struct.pack(">i", correlation_id) +
+            struct.pack(">h", error_code) +
+            struct.pack(">i", request_api_key) +
+            struct.pack(">i", throttle_time_ms) +
+            BUFFER_SIZE
+    )
+    message_size= len(body)
+
 
 
     # kafka response
-    response = struct.pack(">i", message_size) + struct.pack(">i", correlation_id) + struct.pack(">h", error_code)
+    response = struct.pack(">i",message_size)+body
 
     conn.sendall(response)
 
