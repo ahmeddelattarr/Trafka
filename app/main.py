@@ -13,40 +13,23 @@ def setup_server():
     return socket.create_server((HOST, PORT), reuse_port=True)
 
 def build_api_versions_response(correlation_id, error_code=0):
-    """
-    Build ApiVersionsResponse v3 as a dict, then serialize it.
-    """
     response_dict = {
         "correlation_id": correlation_id,
         "error_code": error_code,
-        "apis": [
-            {
-                "api_key": api_key,
-                "min_version": api["min_version"],
-                "max_version": api["max_version"],
-            }
-            for api_key, api in SUPPORTED_APIS.items()
-        ],
+        "apis": [],
         "throttle_time_ms": 0,
     }
 
-    # --- Serialization ---
     body = b""
     body += struct.pack(">i", response_dict["correlation_id"])
     body += struct.pack(">h", response_dict["error_code"])
-    body += struct.pack(">i", len(response_dict["apis"]))
-
-    for api in response_dict["apis"]:
-        body += struct.pack(">h", api["api_key"])
-        body += struct.pack(">h", api["min_version"])
-        body += struct.pack(">h", api["max_version"])
-        body += b"\x00"  # empty TAG_BUFFER
-
+    body += struct.pack(">i", len(response_dict["apis"]))  # num_api_keys
     body += struct.pack(">i", response_dict["throttle_time_ms"])
-    #body += b"\x00"  # TAG_BUFFER
+    body += b"\x00"  # tagged_fields_count = 0
 
     message_size = len(body)
     return struct.pack(">i", message_size) + body, response_dict
+
 
 def handle_client(conn):
     data = conn.recv(BUFFER_SIZE)
