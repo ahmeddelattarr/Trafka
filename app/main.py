@@ -43,7 +43,7 @@ def build_api_versions_response(correlation_id, error_code=0):
         body += b"\x00"  # empty TAG_BUFFER
 
     body += struct.pack(">i", response_dict["throttle_time_ms"])
-    body += b"\x00"  # TAG_BUFFER
+    #body += b"\x00"  # TAG_BUFFER
 
     message_size = len(body)
     return struct.pack(">i", message_size) + body, response_dict
